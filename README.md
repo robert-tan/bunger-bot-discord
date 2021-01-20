@@ -17,6 +17,6 @@ DISCORD_TOKEN=YOUR-TOKEN-HERE
 4. Run `python3 bot.py`
 
 ## Dependencies
-Python 3.8 (dev)
-Discord.py
-python-dotenv
+* Python 3.8 (dev)
+* Discord.py
+* python-dotenv
