@@ -3,14 +3,15 @@ import os
 import json
 import random
 
-import discord
 from discord.ext import commands
+from discord.flags import Intents
 from dotenv import load_dotenv
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 
-client = commands.Bot(command_prefix="!")
+intents = Intents.all()
+client = commands.Bot(command_prefix="!", intents=intents)
 data = dict()
 
 SKRIBBL = 'skribbl'
@@ -54,7 +55,12 @@ async def globally_block_dms(ctx):
 
 
 @client.command(name='add-word', brief='Adds a word/phrase to your server\'s custom Skribbl.io word list')
-async def add_word(ctx, arg):
+async def add_word(ctx, *args):
+    arg = ""
+    for word in args:
+        arg = arg + word + " "
+    arg = arg[:-1]
+
     print(f'Received !add-word {arg} from {ctx.author.name}')
     skribbl_lst = get_guild_data(ctx.guild)[SKRIBBL]
     skribbl_lst.append(arg)
@@ -78,7 +84,6 @@ async def rm_word(ctx, arg):
 @client.command(name="view-list", brief='View your server\'s custom Skribbl.io word list')
 async def view_list(ctx):
     print(f'Received !view-list from {ctx.author.name}')
-    print(data)
     skribbl_lst = get_guild_data(ctx.guild)[SKRIBBL]
     if len(skribbl_lst) == 0:
         await ctx.send("There's nothing in the Skribbl.io list. Add one using the `!add-word` command!")
@@ -92,14 +97,31 @@ async def view_list(ctx):
     await bunger(ctx)
 
 
+@client.command(name="bunger-time", brief='Ping all users with the @bunger role')
+async def bunger_time(ctx):
+    print(f'Received !bunger-time from {ctx.author.name}')
+    users_to_mention = [ 
+        user for user in ctx.guild.members 
+        if 'bunger' in { role.name.lower() for role in user.roles } and not user.bot
+    ]
+
+    for user in users_to_mention:
+        print(f'Sending a mention to {user.name}')
+        await ctx.send(user.mention + ' IT\'S BUNGER TIME!\n' + random_bunger_image())
+
+
 @client.command(brief='RANDOM BUNGER GIF')
 async def bunger(ctx):
-    await ctx.send(BUNGER_IMAGES[random.randint(0, len(BUNGER_IMAGES) - 1)])
+    await ctx.send(random_bunger_image())
 
 
 def serialize_data():
     with open(DATA_PATH, 'w') as f:
         f.write(json.dumps(data))
+
+
+def random_bunger_image():
+    return BUNGER_IMAGES[random.randint(0, len(BUNGER_IMAGES) - 1)]
 
 
 client.run(TOKEN)
