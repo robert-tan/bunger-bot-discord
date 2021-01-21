@@ -2,8 +2,9 @@
 import os
 import json
 import random
+import discord
+import asyncio
 from discord.enums import Status
-
 from discord.ext import commands
 from discord.flags import Intents
 from dotenv import load_dotenv
@@ -113,9 +114,25 @@ async def bunger_time(ctx):
         await ctx.send(user.mention + ' IT\'S BUNGER TIME!\n' + random_bunger_image())
 
 
+@client.command(name='spam-ping', brief='Spam the mentioned user')
+async def spam_ping(ctx, arg: discord.Member):
+    TIMES_PING = 10
+    for i in range(TIMES_PING):
+        asyncio.ensure_future(
+            send_after_delay(i, ctx, 
+                f'{arg.mention} It\'s time to BUNGER! {random_bunger_image()}'
+            )
+        )
+
+
 @client.command(brief='RANDOM BUNGER GIF')
 async def bunger(ctx):
     await ctx.send(random_bunger_image())
+
+
+async def send_after_delay(delay, ctx, message):
+    await asyncio.sleep(delay)
+    await ctx.send(message)
 
 
 def serialize_data():
@@ -127,4 +144,6 @@ def random_bunger_image():
     return BUNGER_IMAGES[random.randint(0, len(BUNGER_IMAGES) - 1)]
 
 
-client.run(TOKEN)
+if __name__ == '__main__':
+    loop = asyncio.get_event_loop()
+    loop.run_forever(client.run(TOKEN))
