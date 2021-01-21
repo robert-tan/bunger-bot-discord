@@ -2,6 +2,7 @@
 import os
 import json
 import random
+from discord.enums import Status
 
 from discord.ext import commands
 from discord.flags import Intents
@@ -102,7 +103,9 @@ async def bunger_time(ctx):
     print(f'Received !bunger-time from {ctx.author.name}')
     users_to_mention = [ 
         user for user in ctx.guild.members 
-        if 'bunger' in { role.name.lower() for role in user.roles } and not user.bot
+        if 'bunger' in { role.name.lower() for role in user.roles } 
+            and not user.bot
+            and user.status != Status.offline
     ]
 
     for user in users_to_mention:
