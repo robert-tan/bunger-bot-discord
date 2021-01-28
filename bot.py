@@ -26,7 +26,8 @@ BUNGER_IMAGES = [
     'https://imgur.com/PuxEZIs.gif',
     'https://imgur.com/nfrg0qX.gif',
     'https://imgur.com/0FOxSGA.gif',
-    'https://imgur.com/fU1TDzs.gif'
+    'https://imgur.com/fU1TDzs.gif',
+    'https://tenor.com/view/bugsnax-bunger-bunger-my-beloved-bunger-bugsnax-gif-19836808'
 ]
 DATA_PATH = './data.json'
 
